@@ -1,0 +1,10 @@
+query continentsWithCountries {
+    continents {
+      name,
+      countries {
+        name,
+        capital,
+        currency
+      }
+    }
+  }
