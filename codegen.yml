@@ -1,12 +1,18 @@
 overwrite: true
-schema: schema.graphql
+schema: graphql-schema/schema.graphql
 documents: src/app/graphql-queries/*.graphql
 generates:
   ./src/app/generated/graphql.ts:
     plugins:
-      - typescript-common
-      - typescript-client
+      - typescript
+      - typescript-operations
+      - typescript-compatibility
       - typescript-apollo-angular
+    config:
+        skipTypename: true
+        namingConvention:
+          typeNames: change-case#pascalCase
+          enumValues: keep
   ./schema.json:
     plugins:
       - introspection

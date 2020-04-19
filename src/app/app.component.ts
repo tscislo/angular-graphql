@@ -1,13 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Apollo} from 'apollo-angular';
-import gql from 'graphql-tag';
 import {map} from 'rxjs/operators';
-import {continentsQuery} from './queries/continents.query';
-import {continentsWithCountries, continentsWithCountries_continents} from './queries/types/continentsWithCountries';
 import {Observable} from 'rxjs';
-import {countriesQuery} from './queries/countries.query';
-import {countries, countries_countries} from './queries/types/countries';
-import {ContinentsWithCountries, ContinentsWithCountriesGQL} from './generated/graphql';
+import {ContinentsWithCountriesGQL, ContinentsWithCountriesQuery, CountriesGQL, CountriesQuery} from './generated/graphql';
 
 @Component({
   selector: 'app-root',
@@ -15,47 +9,36 @@ import {ContinentsWithCountries, ContinentsWithCountriesGQL} from './generated/g
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public continents: Observable<ContinentsWithCountries.Continents[]>;
+  public continents: Observable<ContinentsWithCountriesQuery['continents']>;
 
-  constructor(private apollo: Apollo,
-              private continentsWithCountriesGQL: ContinentsWithCountriesGQL
-              ) {
+  constructor(
+    private continentsWithCountriesGQL: ContinentsWithCountriesGQL,
+    private countriesGQL: CountriesGQL
+  ) {
   }
 
   ngOnInit() {
-    this.continents = this.apollo
-      .watchQuery({
-        query: this.continentsWithCountriesGQL.document,
-      })
+    this.continents = this.continentsWithCountriesGQL
+      .watch()
       .valueChanges
       .pipe(
         map(({data}) => data),
-        map((data: ContinentsWithCountries.Query) => data.continents)
+        map((data: ContinentsWithCountriesQuery) => data.continents)
       );
 
-    // setTimeout(() => {
-    //   this.apollo
-    //     .watchQuery({
-    //       query: continentsQuery,
-    //     })
-    //     .valueChanges
-    //     .pipe(
-    //       map(({data}) => data),
-    //       map((data: continentsWithCountries) => data.continents)
-    //     ).subscribe((cont) => {
-    //       console.log(cont)
-    //   })
-    //   // this.apollo
-    //   //   .watchQuery({
-    //   //     query: countriesQuery,
-    //   //   })
-    //   //   .valueChanges
-    //   //   .pipe(
-    //   //     map(({data}) => data),
-    //   //     map((data: countries) => data.countries)
-    //   //   ).subscribe((c: countries_countries[]) => {
-    //   //   console.log(c);
-    //   // });
-    // }, 2000);
+    this.countriesGQL
+      .watch()
+      .valueChanges
+      .pipe(
+        map(({data}) => data),
+        map((data: CountriesQuery) => data.countries)
+      ).subscribe((c: CountriesQuery['countries']) => {
+      console.log(c);
+    });
+
+    this.continents.subscribe((r) => {
+      console.log(r);
+    });
+
   }
 }
