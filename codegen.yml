@@ -6,7 +6,6 @@ generates:
     plugins:
       - typescript
       - typescript-operations
-      - typescript-compatibility
       - typescript-apollo-angular
     config:
         skipTypename: true

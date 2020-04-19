@@ -130,18 +130,17 @@ export type CountriesQueryVariables = {};
 
 export type CountriesQuery = { countries: Array<Pick<Country, 'name' | 'capital' | 'currency'>> };
 
-export namespace ContinentsWithCountries {
-  export type Variables = ContinentsWithCountriesQueryVariables;
-  export type Query = ContinentsWithCountriesQuery;
-  export type Continents = ContinentsWithCountriesQuery['continents'][0];
-  export type Countries = ContinentsWithCountriesQuery['continents'][0]['countries'][0];
-}
+export type OneCountryQueryVariables = {
+  continent: Scalars['String'];
+};
 
-export namespace Countries {
-  export type Variables = CountriesQueryVariables;
-  export type Query = CountriesQuery;
-  export type Countries = CountriesQuery['countries'][0];
-}
+
+export type OneCountryQuery = {
+  continents: Array<(
+    Pick<Continent, 'code' | 'name'>
+    & { countries: Array<Pick<Country, 'name' | 'capital' | 'currency'>> }
+    )>
+};
 
 export const ContinentsWithCountriesDocument = gql`
   query continentsWithCountries {
@@ -179,5 +178,27 @@ export const CountriesDocument = gql`
 })
 export class CountriesGQL extends Apollo.Query<CountriesQuery, CountriesQueryVariables> {
   document = CountriesDocument;
+
+}
+
+export const OneCountryDocument = gql`
+  query oneCountry($continent: String!) {
+    continents(filter: {code: {eq: $continent}}) {
+      code
+      name
+      countries {
+        name
+        capital
+        currency
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OneCountryGQL extends Apollo.Query<OneCountryQuery, OneCountryQueryVariables> {
+  document = OneCountryDocument;
 
 }

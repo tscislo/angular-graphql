@@ -1,0 +1,11 @@
+query oneCountry ($continent: String!) {
+  continents (filter : {code: {eq :$continent}}) {
+    code,
+    name,
+    countries {
+      name,
+      capital,
+      currency
+    }
+  }
+}

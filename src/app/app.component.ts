@@ -1,7 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {ContinentsWithCountriesGQL, ContinentsWithCountriesQuery, CountriesGQL, CountriesQuery} from './generated/graphql';
+import {
+  ContinentsWithCountriesGQL,
+  ContinentsWithCountriesQuery,
+  CountriesGQL,
+  CountriesQuery,
+  OneCountryGQL,
+  OneCountryQuery
+} from './generated/graphql';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +20,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private continentsWithCountriesGQL: ContinentsWithCountriesGQL,
-    private countriesGQL: CountriesGQL
+    private countriesGQL: CountriesGQL,
+    private oneCountryGQL: OneCountryGQL
   ) {
   }
 
@@ -36,9 +44,21 @@ export class AppComponent implements OnInit {
       console.log(c);
     });
 
-    this.continents.subscribe((r) => {
-      console.log(r);
-    });
+    // this.continents.subscribe((r) => {
+    //   console.log(r);
+    // });
+
+    this.oneCountryGQL
+      .watch({
+        continent: 'EU'
+      }).valueChanges
+      .pipe(
+        map(({data}) => data),
+        map((data: OneCountryQuery) => data.continents)
+      )
+      .subscribe((c: OneCountryQuery['continents']) => {
+        console.log('Continent -> ', c[0]?.name);
+      });
 
   }
 }
