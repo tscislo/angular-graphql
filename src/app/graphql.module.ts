@@ -8,6 +8,17 @@ export function createApollo(httpLink: HttpLink) {
   return {
     link: httpLink.create({uri}),
     cache: new InMemoryCache(),
+    defaultOptions: {
+      // disabling cache
+      // watchQuery: {
+      //   fetchPolicy: 'no-cache',
+      //   errorPolicy: 'ignore',
+      // },
+      // query: {
+      //   fetchPolicy: 'no-cache',
+      //   errorPolicy: 'all',
+      // },
+    }
   };
 }
 
